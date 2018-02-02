@@ -16,14 +16,12 @@ const urlStruct = {
   '/forbidden': jsonHandler.forbidden,
   '/internal': jsonHandler.internal,
   '/notImplemented': jsonHandler.notImplemented,
-  'notFound': jsonHandler.notFound,
+  notFound: jsonHandler.notFound,
 };
 
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
-
-  console.dir(params);
 
   if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response, params);

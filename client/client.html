@@ -6,10 +6,48 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
+
+    const handleResponse = xhr => {
+      const id = document.querySelector('#id');
+      const message = document.querySelector('#message');
+      const type = xhr.getResponseHeader('Content-Type');
+      const page = document.querySelector('#page');
+      let response = '';
+
+      id.innerHTML = page.options[page.selectedIndex].innerHTML;
+
+      if (type === 'application/json') {
+        response = JSON.parse(xhr.response);
+        message.innerHTML = `Message: ${response.message}`;
+      } else {
+        response = xhr.responseXML;
+        message.innerHTML = `Message: ${response.querySelector('message').innerHTML}`;
+      }
+      console.log(type);
+      console.log(response);
+    }
+
+    const sendAjax = (url, acceptedType) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.setRequestHeader('Accept', acceptedType);
+
+      xhr.onload = () => handleResponse(xhr);
+
+      xhr.send();
+    }
     const init = () => {
       const send = document.querySelector('#send');
 
+      send.onclick = () => {
+        const ajaxType = document.querySelector('#type').value;
+        const url = document.querySelector('#page').value;
+
+        sendAjax(url, ajaxType);
+      };
     };
+
+    window.onload = init;
   </script>
 </head>
 <body>
@@ -31,6 +69,8 @@
     <button id="send">Send</button>
   </section>
   <section id="content">
+    <h1 id='id'></h1>
+    <p id="message"></p>
   </section>
 </body>
 </html>
